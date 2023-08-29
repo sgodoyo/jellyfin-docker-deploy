@@ -1,0 +1,26 @@
+:PROPERTIES:
+:GPTEL_MODEL: gpt-3.5-turbo
+:GPTEL_BOUNDS: nil
+:END:
+#+TITLE: Jellyfin
+#+SUBTITLE: stack deploy
+#+AUTHOR: Sebastian Godoy Olivares
+#+EMAIL: shackleto@riseup.net
+#+DATE: 
+#+DESCRIPTION: Descripción de mi documento en una línea  
+#+KEYWORDS: keyword1, keyword2
+#+LANGUAGE: es
+#+OPTIONS: toc:nil num:nil
+#+CATEGORY: Mis Categorias
+#+TAGS: tag1, tag2, tag3 
+
+* TODO Crear infraestructura con Terraform en Linode
+
+** TODO Aprovisionar VM
+
+** TODO Instalar Docker
+
+* TODO Crear Dockerfile
+crea un dockerfile base debian
+
+* 
