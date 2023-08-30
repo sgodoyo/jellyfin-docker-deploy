@@ -20,4 +20,4 @@ WORKDIR /app
 COPY install-jellyfin.sh /app
 
 # Ejecutar un comando cuando el contenedor se inicie
-CMD [ "bash", "./my-app.sh" ]
+CMD [ "bash", "./install-jellyfin.sh" ]
