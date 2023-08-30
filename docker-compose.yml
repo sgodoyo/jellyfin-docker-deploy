@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik
+    restart: always
+    command:
+      - "--providers.docker"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.docker.exposedByDefault=false"
+      - "--api.insecure=true"
+      - "--log.level=DEBUG"
+      - "--providers.docker.defaultRule=Host(`{{ trimPrefix `/` .Name }}.*.itechile.cl`)"
+      - "--certificatesResolvers.jellyfin-app.acme.httpChallenge=true"
+      - "--certificatesResolvers.jellyfin-app.acme.httpChallenge.entryPoint=web"
+      - "--certificatesResolvers.jellyfin-app.acme.email=shackleton@riseup.net"
+      - "--certificatesResolvers.jellyfin-app.acme.storage=/letsencrypt/acme.json"
+
+    volumes:
+      - "./traefik/letsencrypt:/letsencrypt"
+      - "./traefik/traefik.yml:/etc/traefik.yml"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+
+  jellyfin-app:
+    build:
+      context: .
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyfin-app.rule=Host(`jellyfin.itechile.cl`)"
+      - "traefik.http.routers.jellyfin-app.tls=true"
+      - "traefik.http.routers.jellyfin-app.entrypoints=websecure"
+      - "traefik.http.services.jellyfin-app.loadbalancer.server.port=8096"
+      - "traefik.http.routers.jellyfin-app.tls.certresolver=cecilia-web"
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+
+    command:
+      - /bin/sh
+      - -c
+      - "sudo systemctl start jellyfin"

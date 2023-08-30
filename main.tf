@@ -13,7 +13,7 @@ provider "linode" {
 }
 
 resource "linode_instance" "docker_host" {
-  label       = "webapp-itechile"
+  label       = "jellyfin-app"
   region      = "us-east"
   type        = "g6-nanode-1"
   image      = "linode/debian10"
@@ -52,23 +52,23 @@ resource "null_resource" "install_docker" {
 }
 
 
-resource "null_resource" "install_gitlab_runner" {
-  depends_on = [linode_instance.docker_host, null_resource.install_docker]
+# resource "null_resource" "install_gitlab_runner" {
+#   depends_on = [linode_instance.docker_host, null_resource.install_docker]
 
-  connection {
-    type        = "ssh"
-    user        = "root"
-    private_key = file("~/.ssh/linode-itechile-devops")
-    host        = linode_instance.docker_host.ip_address
-  }
+#   connection {
+#     type        = "ssh"
+#     user        = "root"
+#     private_key = file("~/.ssh/linode-itechile-devops")
+#     host        = linode_instance.docker_host.ip_address
+#   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | bash",
-      "apt-get install -y gitlab-runner",
-      "gitlab-runner register --non-interactive --url https://gitlab.com/ --token '${var.runner_token}'",
-      "systemctl enable gitlab-runner",
-      "systemctl start gitlab-runner"
-    ]
-  }
-}
+#   provisioner "remote-exec" {
+#     inline = [
+#       "curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | bash",
+#       "apt-get install -y gitlab-runner",
+#       "gitlab-runner register --non-interactive --url https://gitlab.com/ --token '${var.runner_token}'",
+#       "systemctl enable gitlab-runner",
+#       "systemctl start gitlab-runner"
+#     ]
+#   }
+# }
